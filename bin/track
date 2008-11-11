@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'lib/track'
+
+home = ENV['HOME']
+config_file = "#{home}/.track.yml"
+
+banner = <<-BANNER
+Usage: track command
+
+Available commands:
+
+  <project> <task> => start a task on a project
+  stop                   => stop a started task
+
+BANNER
+
+if ARGV.empty?
+  puts banner
+  exit 0
+elsif not File.exists?(config_file)
+  STDERR.puts "Create a #{home}/.track.yml file please."
+  exit 1
+else
+  options = YAML.load_file(config_file)
+  options ||= {}
+  Track.new(options).run(ARGV)
+end

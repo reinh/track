@@ -1,0 +1,5 @@
+== track
+
+A gem that provides an awesome command line interface for time tracking that is awesome.
+
++track+ without arguments for usage instructions.

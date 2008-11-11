@@ -1,5 +1,38 @@
-== track
+= track
 
-A gem that provides an awesome command line interface for time tracking that is awesome.
+A gem that provides an awesome command line interface for time tracking that is
+awesome.
 
-+track+ without arguments for usage instructions.
+== Installing
+
+  gem install ReinH-track --source http://gems.github.com
+
+== Examples
+
+  track TodoList list has many items
+  track TodoList items can be completed
+  track stop
+
+will add entries to a file named <tt>track-#{Date.today.to_s}.txt</tt> that look like:
+
+  [2:12 - 2:46] TodoList: list has many items
+  [2:46 - 3:20] TodoList: items can be completed
+
+== Configuration
+
+a <tt>~/.track.yml</tt> file holds basic configuration options.
+
+=== Example
+
+  filename: TRACK
+  projects:
+    tl: TodoList
+
+=== Options
+
+* +filename+: change the default file prefix.
+* +projects+: specify aliases for common projects. Use <tt>track tl</tt> instead of <tt>track TodoList</tt>.
+
+==Coming Soon
+
+* calculate total hours per project.

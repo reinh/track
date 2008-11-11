@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{track}
-  s.version = "0.0.1"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Rein Henrichs"]
@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.description = %q{A gem that provides an awesome command line interface for time tracking that is awesome.}
   s.email = %q{reinh@reinh.com}
   s.executables = ["track"]
-  s.extra_rdoc_files = ["README", "LICENSE", "TODO"]
-  s.files = ["LICENSE", "README", "Rakefile", "TODO", "bin/track", "lib/track.rb", "spec/fixtures", "spec/spec_helper.rb", "spec/track_spec.rb"]
+  s.extra_rdoc_files = ["README.rdoc", "LICENSE", "TODO"]
+  s.files = ["LICENSE", "README.rdoc", "Rakefile", "TODO", "bin/track", "lib/track.rb", "spec/fixtures", "spec/spec_helper.rb", "spec/track_spec.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/ReinH/track}
   s.require_paths = ["lib"]

@@ -33,7 +33,7 @@ class Track
   end
   
   def write_line(project, description)
-    line = "* [#{time_string} - #{placeholder}] "
+    line = "[#{time_string} - #{placeholder}] "
     line << project if project
     line << ":\t" << description unless description.empty?
     File.open(log_filename, 'a') do |file|
@@ -49,7 +49,7 @@ class Track
     str = options['filename'] || 'track'
     str += '-'
     str += Date.today.to_s
-    str += '.textile'
+    str += '.txt'
     return str
   end
 

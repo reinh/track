@@ -86,8 +86,8 @@ describe Track do
     end
 
     describe "with project \"Project\" and description \"Description\"" do
-      it "looks like \"* [<time> - --:--] Project:	Description\"" do
-        last_line.should == "* [#{@time_string} - --:--] Project:\tDescription"
+      it "looks like \"[<time> - --:--] Project:	Description\"" do
+        last_line.should == "[#{@time_string} - --:--] Project:\tDescription"
       end
     end
   end
@@ -124,8 +124,8 @@ describe Track do
       @track.send(:log_filename).should include(Date.today.to_s)
     end
 
-    it "is a textile file" do
-      @track.send(:log_filename).should match(/\.textile$/)
+    it "is a text file" do
+      @track.send(:log_filename).should match(/\.txt$/)
     end
 
   end

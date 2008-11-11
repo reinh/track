@@ -19,11 +19,9 @@ BANNER
 if ARGV.empty?
   puts banner
   exit 0
-elsif not File.exists?(config_file)
-  STDERR.puts "Create a #{home}/.track.yml file please."
-  exit 1
 else
-  options = YAML.load_file(config_file)
+  options = nil
+  options = YAML.load_file(config_file) if File.size?(config_file)
   options ||= {}
   Track.new(options).run(ARGV)
 end

@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "track"
-GEM_VERSION = "1.0.1"
+GEM_VERSION = "1.0.2"
 AUTHOR = "Rein Henrichs"
 EMAIL = "reinh@reinh.com"
 HOMEPAGE = "http://github.com/ReinH/track"

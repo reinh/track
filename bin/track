@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
-require 'lib/track'
+require File.join(File.dirname(__FILE__),'..','lib','track')
 
 home = ENV['HOME']
 config_file = "#{home}/.track.yml"

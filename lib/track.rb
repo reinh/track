@@ -37,6 +37,11 @@ class Track
   end
 
   def cat
+    unless File.exists?(log_filename)
+      STDERR.puts("No track file available")
+      exit(1)
+    end
+
     File.open(log_filename) do |file|
       file.each{ |line| STDOUT.puts(line) }
     end

@@ -8,7 +8,11 @@ class Track
   end
 
   def run(argv)
-    argv.first == "stop" ? stop : start(*argv)
+    case argv.first
+    when 'stop' ; stop
+    when 'cat'  ; cat
+    else start(*argv)
+    end
   end
 
   private
@@ -31,7 +35,13 @@ class Track
       file.write(lines.join)
     end
   end
-  
+
+  def cat
+    File.open(log_filename) do |file|
+      file.each{ |line| STDOUT.puts(line) }
+    end
+  end
+
   def write_line(project, description)
     line = "[#{time_string} - #{placeholder}] "
     line << project if project

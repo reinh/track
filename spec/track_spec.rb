@@ -106,6 +106,23 @@ describe Track do
       lambda {@track.send(:stop)}.should_not change{last_line}
     end
   end
+
+  describe "#cat" do
+    before(:each) do
+      @track.send(:start) # ensure the file exists
+    end
+
+    it "should open the log file for reading" do
+      File.should_receive(:open).with(@track.send(:log_filename))
+      @track.send(:cat)
+    end
+
+    it "should output each line in the file to STDOUT" do
+      line_count = File.readlines(@track.send(:log_filename)).size
+      STDOUT.should_receive(:puts).exactly(line_count).times
+      @track.send(:cat)
+    end
+  end
 end
 
 describe Track do

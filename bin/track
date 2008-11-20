@@ -11,7 +11,8 @@ Usage: track command
 Available commands:
 
   <project> <task> => start a task on a project
-  stop                   => stop a started task
+  stop             => stop a started task
+  cat              => print the current timesheet
 
 BANNER
 

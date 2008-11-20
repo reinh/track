@@ -38,13 +38,11 @@ class Track
 
   def cat
     unless File.exists?(log_filename)
-      STDERR.puts("No track file available")
+      $stderr.puts("No track file available")
       return Kernel.exit(1)
     end
 
-    File.open(log_filename) do |file|
-      file.each{ |line| STDOUT.puts(line) }
-    end
+    File.foreach(log_filename){ |line| $stdout.puts(line) }
   end
 
   def write_line(project, description)

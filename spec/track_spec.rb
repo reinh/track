@@ -108,29 +108,55 @@ describe Track do
   end
 
   describe "#cat" do
-    it "should open the log file for reading" do
-      @track.send(:start) # ensure the file exists
-      File.should_receive(:open).with(@track.send(:log_filename))
-      @track.send(:cat)
-    end
+    describe "when a log file is available" do
+      before do
+        @track.send(:start) # ensure the file exists
+        @old, $stdout = $stdout, StringIO.new
+      end
 
-    it "should output each line in the file to STDOUT" do
-      @track.send(:start) # ensure the file exists
-      line_count = File.readlines(@track.send(:log_filename)).size
-      STDOUT.should_receive(:puts).exactly(line_count).times
-      @track.send(:cat)
+      after do
+        $stdout = @old
+      end
+
+      it "should output the file to STDOUT" do
+        lines = File.readlines(@track.send(:log_filename))
+
+        @track.send(:cat)
+
+        $stdout.rewind
+        $stdout.read.should == File.read(@track.send(:log_filename))
+      end
     end
 
     describe "if no log file is available" do
-      it "should exit with status 1" do
-        lambda{@track.send(:cat)}.should raise_error(SystemExit)
+      before do
+        @oldout, $stdout = $stdout, StringIO.new
+        @olderr, $stderr = $stderr, StringIO.new
       end
 
-      it "should not execute the remainder of the method" do
-        # weak sauce for testing the implementation. better ideas welcome.
-        Kernel.stub!(:exit)
-        File.should_not_receive(:open)
+      after do
+        $stdout = @oldout
+        $stderr = @olderr
+      end
+
+      it "should exit with status 1" do
+        Kernel.should_receive(:exit).with(1)
         @track.send(:cat)
+      end
+
+      it "should not write to standard out" do
+        Kernel.stub!(:exit)
+        @track.send(:cat)
+
+        $stdout.size.should == 0
+      end
+
+      it "should write a warning to standard error" do
+        Kernel.stub!(:exit)
+        @track.send(:cat)
+
+        $stderr.rewind
+        $stderr.read.should == "No track file available\n"
       end
     end
   end

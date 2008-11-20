@@ -3,8 +3,7 @@
 require 'yaml'
 require File.join(File.dirname(__FILE__),'..','lib','track')
 
-home = ENV['HOME']
-config_file = "#{home}/.track.yml"
+config_file = File.join(ENV['HOME'], ".track.yml")
 
 banner = <<-BANNER
 Usage: track command

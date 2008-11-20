@@ -108,19 +108,30 @@ describe Track do
   end
 
   describe "#cat" do
-    before(:each) do
-      @track.send(:start) # ensure the file exists
-    end
-
     it "should open the log file for reading" do
+      @track.send(:start) # ensure the file exists
       File.should_receive(:open).with(@track.send(:log_filename))
       @track.send(:cat)
     end
 
     it "should output each line in the file to STDOUT" do
+      @track.send(:start) # ensure the file exists
       line_count = File.readlines(@track.send(:log_filename)).size
       STDOUT.should_receive(:puts).exactly(line_count).times
       @track.send(:cat)
+    end
+
+    describe "if no log file is available" do
+      it "should exit with status 1" do
+        lambda{@track.send(:cat)}.should raise_error(SystemExit)
+      end
+
+      it "should not execute the remainder of the method" do
+        # weak sauce for testing the implementation. better ideas welcome.
+        Kernel.stub!(:exit)
+        File.should_not_receive(:open)
+        @track.send(:cat)
+      end
     end
   end
 end

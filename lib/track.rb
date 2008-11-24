@@ -1,10 +1,17 @@
 require 'date'
 
+$:.unshift File.dirname(__FILE__)
+require 'track/store'
+
 class Track
   attr_reader :options, :projects
   def initialize(options={})
     @options = options
     @projects = @options['projects'] || {}
+  end
+
+  def ==(other)
+    [self.log_filename, self.projects, self.options] == [other.log_filename, other.projects, other.options]
   end
 
   def run(argv)
@@ -13,6 +20,14 @@ class Track
     when 'cat'  ; cat
     else start(*argv)
     end
+  end
+
+  def log_filename
+    str = options['filename'] || 'track'
+    str += '-'
+    str += Date.today.to_s
+    str += '.txt'
+    return str
   end
 
   private
@@ -56,14 +71,6 @@ class Track
 
   def time_string(time = Time.now)
     time.strftime('%H:%M')
-  end
-
-  def log_filename
-    str = options['filename'] || 'track'
-    str += '-'
-    str += Date.today.to_s
-    str += '.txt'
-    return str
   end
 
   def placeholder

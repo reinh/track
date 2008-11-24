@@ -25,6 +25,14 @@ describe Track do
     File.readlines(TMP_FILENAME).last.chomp
   end
 
+  describe "#==" do
+    it "should be equal if the log filename is equal, the projects are equal and the options are equal" do
+      @track = Track.new
+      @track_2 = Track.new
+      @track.should == @track_2
+    end
+  end
+
   describe "#run" do
     describe "when the first argument is \"stop\"" do
       it "stops" do

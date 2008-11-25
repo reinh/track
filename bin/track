@@ -20,8 +20,8 @@ if ARGV.empty?
   puts banner
   exit 0
 else
-  options = nil
   options = YAML.load_file(config_file) if File.size?(config_file)
-  options ||= {}
-  Track.new(options).run(ARGV)
+  Track::Store.open do |track|
+    track.run(ARGV,options)
+  end
 end

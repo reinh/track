@@ -1,35 +1,27 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe Track do
-  TMP_FILENAME = File.expand_path(File.join(File.dirname(__FILE__), 'fixtures', 'time_log.tmp'))
-
   before do
     @track = Track.new
-    @track.stub!(:log_filename).and_return(TMP_FILENAME)
 
     @time = Time.now
     @time.stub!(:now).and_return(@time)
     @time_string = @time.strftime('%H:%M')
   end
 
-  after do
-    File.unlink(TMP_FILENAME) if File.exists?(TMP_FILENAME)
-  end
-
-  def line_count
-    `wc -l #{TMP_FILENAME} 2>/dev/null`.to_i
-  end
-  private :line_count
-
   def last_line
-    File.readlines(TMP_FILENAME).last.chomp
+    $stdout.readlines.last.chomp
   end
 
   describe "#==" do
-    it "should be equal if the log filename is equal, the projects are equal and the options are equal" do
+    it "should be equal if the options are equal and the entries are equal" do
       @track = Track.new
-      @track_2 = Track.new
-      @track.should == @track_2
+      @track.options[:foo] = :foo
+      @track.entries << :foo
+      @track2 = Track.new
+      @track2.options[:foo] = :foo
+      @track2.entries << :foo
+      @track.should == @track2
     end
   end
 
@@ -54,120 +46,52 @@ describe Track do
     end
   end
 
-  describe "#start" do
-    it "stops any started task" do
-      @track.should_receive(:stop)
-      @track.send(:start)
-    end
-
-    it "appends a line to the log file" do
-      lambda do
-        @track.send(:start, "Project", "Description")
-      end.should change{line_count}
-    end
-
-  end
-
-  describe "#write_line" do
-    before do
-      @track.send(:write_line, "Project", "Description")
-    end
-
-    it "includes the start time" do
-      last_line.should include(@time_string)
-    end
-
-    it "includes a placeholder for the end time" do
-      last_line.should include('--:--')
-    end
-
-    it "wraps the times in []" do
-      last_line.should match(/\[.+\]/)
-    end
-
-    it "includes the project name followed by a \":\"" do
-      last_line.should include("Project:")
-    end
-
-    it "includes the description" do
-      last_line.should include("Project:")
-    end
-
-    describe "with project \"Project\" and description \"Description\"" do
-      it "looks like \"[<time> - --:--] Project:	Description\"" do
-        last_line.should == "[#{@time_string} - --:--] Project:\tDescription"
-      end
-    end
-  end
+  describe "#start"
 
   describe "#stop" do
-    it "replaced the end time placeholder with the end time" do
-      @track.send(:start)
-      @track.send(:stop)
-      last_line.should_not include('--:--')
-      last_line.should include("[#@time_string - #@time_string]")
+    before do
+      @track = Track.new
     end
 
-    it "does not change the last line if there is nothing to stop" do
-      @track.send(:start)
-      @track.send(:stop)
-      lambda {@track.send(:stop)}.should_not change{last_line}
+    describe "without any entries" do
+      it "should not change the entries" do
+        expected = @track.entries.dup
+        @track.stop
+        actual = @track.entries
+
+        actual.should == expected
+      end
+    end
+
+    describe "with a stopped entry" do
+      before do
+        @stopped_entry = Entry.new(Time.now, Time.now, '', '')
+        @track.entries << @stopped_entry
+      end
+
+      it "should not change the entries" do
+        expected = @track.entries.dup
+        @track.stop
+        actual = @track.entries
+
+        actual.should == expected
+      end
+    end
+
+    describe "with a started entry" do
+      before do
+        @started_entry = Entry.new(Time.now, nil, '', '')
+        @track.entries << @started_entry
+      end
+
+      it "should stop the entry" do
+        @track.stop
+        @track.entries.last.should be_stopped
+      end
     end
   end
 
-  describe "#cat" do
-    describe "when a log file is available" do
-      before do
-        @track.send(:start) # ensure the file exists
-        @old, $stdout = $stdout, StringIO.new
-      end
-
-      after do
-        $stdout = @old
-      end
-
-      it "should output the file to STDOUT" do
-        lines = File.readlines(@track.send(:log_filename))
-
-        @track.send(:cat)
-
-        $stdout.rewind
-        $stdout.read.should == File.read(@track.send(:log_filename))
-      end
-    end
-
-    describe "if no log file is available" do
-      before do
-        @oldout, $stdout = $stdout, StringIO.new
-        @olderr, $stderr = $stderr, StringIO.new
-      end
-
-      after do
-        $stdout = @oldout
-        $stderr = @olderr
-      end
-
-      it "should exit with status 1" do
-        Kernel.should_receive(:exit).with(1)
-        @track.send(:cat)
-      end
-
-      it "should not write to standard out" do
-        Kernel.stub!(:exit)
-        @track.send(:cat)
-
-        $stdout.size.should == 0
-      end
-
-      it "should write a warning to standard error" do
-        Kernel.stub!(:exit)
-        @track.send(:cat)
-
-        $stderr.rewind
-        $stderr.read.should == "No track file available\n"
-      end
-    end
-  end
+  describe "#cat"
 end
 
 describe Track do
@@ -175,20 +99,5 @@ describe Track do
     @track = Track.new
   end
 
-  describe "#log_filename" do
-    it "starts with the filename specified in the options" do
-      @track.options['filename'] = 'file'
-      @track.send(:log_filename).should match(/^file/)
-    end
-
-    it "includes the current date" do
-      require 'date'
-      @track.send(:log_filename).should include(Date.today.to_s)
-    end
-
-    it "is a text file" do
-      @track.send(:log_filename).should match(/\.txt$/)
-    end
-
-  end
+  describe "#log_filename"
 end

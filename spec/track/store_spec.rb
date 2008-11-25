@@ -20,4 +20,10 @@ describe Store do
       Track::Store.load.should == @track
     end
   end
+
+  describe "opening a track from storage and adding an entry" do
+    it "should store the modified track" do
+      pending
+    end
+  end
 end

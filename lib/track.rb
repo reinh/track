@@ -2,19 +2,25 @@ require 'date'
 
 $:.unshift File.dirname(__FILE__)
 require 'track/store'
+require 'track/entry'
 
 class Track
-  attr_reader :options, :projects
-  def initialize(options={})
-    @options = options
-    @projects = @options['projects'] || {}
+  attr_reader :options, :projects, :entries
+  attr_writer :options
+
+  def initialize
+    @entries   = []
   end
+
+  def options;   @options  ||= {} end
+  def projects;  @projects ||= options['projects'] || {} end
 
   def ==(other)
-    [self.log_filename, self.projects, self.options] == [other.log_filename, other.projects, other.options]
+    [self.options, self.entries] == [other.options, other.entries]
   end
 
-  def run(argv)
+  def run(argv, options=nil)
+    self.options = options
     case argv.first
     when 'stop' ; stop
     when 'cat'  ; cat
@@ -30,8 +36,6 @@ class Track
     return str
   end
 
-  private
-
   def start(*args)
     stop
     project_name = args.shift
@@ -42,13 +46,8 @@ class Track
   end
 
   def stop
-    return unless File.size?(log_filename)
-    File.open(log_filename, 'r+') do |file|
-      lines = file.readlines
-      lines.last.sub!(placeholder, time_string)
-      file.rewind
-      file.write(lines.join)
-    end
+    return if entries.empty? || entries.last.stopped?
+    entries.last.stop
   end
 
   def cat
@@ -60,20 +59,4 @@ class Track
     File.foreach(log_filename){ |line| $stdout.puts(line) }
   end
 
-  def write_line(project, description)
-    line = "[#{time_string} - #{placeholder}] "
-    line << project if project
-    line << ":\t" << description unless description.empty?
-    File.open(log_filename, 'a') do |file|
-      file.puts(line)
-    end
-  end
-
-  def time_string(time = Time.now)
-    time.strftime('%H:%M')
-  end
-
-  def placeholder
-    "--:--"
-  end
 end

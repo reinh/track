@@ -7,9 +7,19 @@ module Store
       end
       return obj
     end
-    
+
     def load
-      Marshal.load(File.read(db_filename))
+      if File.size?(db_filename)
+        Marshal.load(File.read(db_filename))
+      else
+        Track.new
+      end
+    end
+
+    def open
+      track = load
+      yield track
+      store track
     end
 
     private

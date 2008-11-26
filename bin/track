@@ -21,7 +21,7 @@ if ARGV.empty?
   exit 0
 else
   options = YAML.load_file(config_file) if File.size?(config_file)
-  Track::Store.open do |track|
+  Store.open do |track|
     track.run(ARGV,options)
   end
 end

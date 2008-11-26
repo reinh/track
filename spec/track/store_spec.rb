@@ -16,8 +16,8 @@ describe Store do
 
   describe "storing and loading an object" do
     it "should store and load the object" do
-      Track::Store.store(@track)
-      Track::Store.load.should == @track
+      Store.store(@track)
+      Store.load.should == @track
     end
   end
 

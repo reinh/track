@@ -18,7 +18,7 @@ class Entry
   def to_s
     line = "[#{start_string} - #{stop_string}] "
     line << project if project
-    line << ":\t" << description unless description.empty?
+    line << ":\t" << description unless description.nil? || description.empty?
     line
   end
 

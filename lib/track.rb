@@ -36,27 +36,30 @@ class Track
     return str
   end
 
-  def start(*args)
-    stop
-    project_name = args.shift
-    description  = args.join(' ').strip
-    project      = projects[project_name] || project_name
+  def last_entry
+    entries.last
+  end
+  
+  def add_entry(project, description=nil)
+    entry = Entry.new(Time.now, nil, project, description)
+    entries << entry
+    entry
+  end
 
-    write_line(project, description)
+  def start(project, *description)
+    stop
+    description = description.join(' ')
+    project = projects[project] || project
+    add_entry(project, description)
   end
 
   def stop
-    return if entries.empty? || entries.last.stopped?
-    entries.last.stop
+    return if entries.empty? || last_entry.stopped?
+    last_entry.stop
   end
 
   def cat
-    unless File.exists?(log_filename)
-      $stderr.puts("No track file available")
-      return Kernel.exit(1)
-    end
-
-    File.foreach(log_filename){ |line| $stdout.puts(line) }
+    $stdout.puts(entries.map{|e|e.to_s}.join("\n"))
   end
 
 end

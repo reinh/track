@@ -1,6 +1,7 @@
 require 'date'
 
 $:.unshift File.dirname(__FILE__)
+require 'core_ext'
 require 'track/store'
 require 'track/entry'
 
@@ -59,7 +60,13 @@ class Track
   end
 
   def cat
-    $stdout.puts(entries.map{|e|e.to_s}.join("\n"))
+    entries_by_date = entries.group_by{|e| e.start_date}
+    entries_by_date.each do |date, date_entries|
+      $stdout.puts
+      $stdout.puts date
+      $stdout.puts '-' * date.to_s.size
+      $stdout.puts(date_entries.map{|e|e.to_s}.join("\n"))
+    end
   end
 
 end

@@ -1,5 +1,5 @@
 class Entry
-  attr_reader :start_time, :stop_time, :project, :description
+  attr_accessor :start_time, :stop_time, :project, :description
   def initialize(start_time, stop_time, project, description)
     @start_time  = start_time
     @stop_time   = stop_time
@@ -20,6 +20,10 @@ class Entry
     line << project if project
     line << ":\t" << description unless description.nil? || description.empty?
     line
+  end
+
+  def start_date
+    Date.new(start_time.year, start_time.month, start_time.day)
   end
 
   def start_string

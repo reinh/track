@@ -9,11 +9,11 @@ module Store
     end
 
     def load
+      track = nil
       if File.size?(db_filename)
-        Marshal.load(File.read(db_filename))
-      else
-        Track.new
+        track = Marshal.load(File.read(db_filename)) rescue nil
       end
+      track ||= Track.new
     end
 
     def open

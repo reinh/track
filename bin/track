@@ -20,8 +20,13 @@ if ARGV.empty?
   puts banner
   exit 0
 else
-  options = YAML.load_file(config_file) if File.size?(config_file)
-  Store.open do |track|
-    track.run(ARGV,options)
+  begin
+    options = YAML.load_file(config_file) if File.size?(config_file)
+    Store.open do |track|
+      track.run(ARGV,options)
+    end
+  rescue => e
+    $stderr.puts e.message
+    exit(1)
   end
 end

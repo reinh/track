@@ -158,7 +158,7 @@ describe Track do
       @track.add_entry('project')
       @track.cat
       $stdout.rewind
-      $stdout.read.should == @track.last_entry.to_s + "\n"
+      $stdout.read.should include(@track.last_entry.to_s + "\n")
       $stdout = old
     end
   end

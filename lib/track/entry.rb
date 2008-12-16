@@ -7,6 +7,11 @@ class Entry
     @description = description
   end
 
+  def duration_in_seconds
+    return unless stopped?
+    stop_time - start_time
+  end
+
   def stopped?
     not stop_time.nil?
   end

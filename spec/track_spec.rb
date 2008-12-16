@@ -153,6 +153,15 @@ describe Track do
   end
 
   describe "#cat" do
+    it "should output each day as a header" do
+      old, $stdout = $stdout, StringIO.new
+      @track.add_entry('project')
+      @track.cat
+      $stdout.rewind
+      $stdout.read.should include(@track.last_entry.start_date.to_s + "\n" + "----------" + "\n")
+      $stdout = old
+    end
+
     it "should output each entry as a string on a line to stdout" do
       old, $stdout = $stdout, StringIO.new
       @track.add_entry('project')
@@ -161,6 +170,19 @@ describe Track do
       $stdout.read.should include(@track.last_entry.to_s + "\n")
       $stdout = old
     end
+
+    it "should output the total time of each project per day to stdout" do
+      old, $stdout = $stdout, StringIO.new
+      @track.add_entry('project')
+      @track.stop
+      @track.cat
+      $stdout.rewind
+      output = $stdout.read
+      output.should include("Totals:\n=======\n")
+      output.should include("project:\t")
+      $stdout = old
+    end
+
   end
 end
 
